@@ -6,15 +6,18 @@ const gl = canvas.getContext('webgl')
 // gl.clear(gl.COLOR_BUFFER_BIT)
 
 const VertexSHADER_SOURCE = `
+  attribute vec4 a_position;
   void main() {
-    gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_Position = a_position;
     gl_PointSize = 5.0;
   }
 `
 
 const FragmentSHADER_SOURCE = `
+  precision mediump float;
+  uniform vec4 u_fragcolor;
   void main() {
-    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    gl_FragColor = u_fragcolor;
   }
 `
 gl.clearColor(0.0, 0.0, 0.0, 1.0)
@@ -35,13 +38,24 @@ gl.attachShader(program, Fshader)
 gl.linkProgram(program)
 
 gl.useProgram(program)
+gl.program = program
 
+const a_position = gl.getAttribLocation(gl.program, 'a_position')
+const u_fragcolor = gl.getUniformLocation(gl.program, 'u_fragcolor')
+console.log('u_fragcolor: ', u_fragcolor);
+console.log('a_position: ', a_position);
 
+gl.vertexAttrib3f(a_position, 0.0, 0.5, 0.0)
+gl.uniform4f(u_fragcolor, 1.0, 1.0, 0.0, 1.0)
 
 // initShaders(gl, VertexSHADER_SOURCE, FragmentSHADER_SOURCE)
 
 
 console.log('gl.POINTS: ', gl.POINTS);
+gl.drawArrays(gl.POINTS, 0, 1)
+
+gl.vertexAttrib3f(a_position, 0.0, 0.0, 0.0)
+gl.uniform4f(u_fragcolor, 0.0, 1.0, 0.0, 1.0)
 gl.drawArrays(gl.POINTS, 0, 1)
 
 
