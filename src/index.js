@@ -8,8 +8,9 @@ const gl = canvas.getContext('webgl')
 
 const VertexSHADER_SOURCE = `
   attribute vec4 a_position;
+  uniform mat4 u_xformMatrix;
   void main() {
-    gl_Position = a_position;
+    gl_Position = u_xformMatrix * a_position;
   }
 `
 
@@ -21,23 +22,49 @@ const FragmentSHADER_SOURCE = `
   }
 `
 
-utils.clear(gl)
-
 utils.initShaders(gl, VertexSHADER_SOURCE, FragmentSHADER_SOURCE)
 
-const u_fragcolor = gl.getUniformLocation(gl.program, 'u_fragcolor')
+const matrix = [
+  1.0, 0.0, 0.0, 0.0,
+  0.0, 1.0, 0.0, 0.0,
+  0.0, 0.0, 1.0, 0.0,
+  0.0, 0.0, 0.0, 1.0,
+]
 
-gl.uniform4f(u_fragcolor, ...utils.getRandomArray(4))
+let n = 0
+setInterval(() => {
+  utils.clear(gl)
+  
+  
+  const u_fragcolor = gl.getUniformLocation(gl.program, 'u_fragcolor')
+  
+  gl.uniform4f(u_fragcolor, ...[1.0, 1.0, 0.0, 1.0]) //...utils.getRandomArray(4))
+  
+  // drawPoint(gl)
+  
+  // drawLine(gl)
+  
+  // drawTriangle(gl)
+  
+  const translate = (1.0 / 120 * n).toFixed(3)
 
-// drawPoint(gl)
+  matrix[12] = translate
+  matrix[13] = translate
+  matrix[14] = translate
+  // console.log('matrix: ', matrix);
+  drawRect(gl, matrix)
+  n++
+  if(n > 120) {
+    n = 0
+  }
+  // drawCircle(gl)
+  
+  // translate
 
-drawLine(gl)
+}, 17)
 
-drawTriangle(gl)
 
-drawRect(gl)
 
-drawCircle(gl)
 
 
 

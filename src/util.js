@@ -44,7 +44,18 @@ const createShader = function (gl, type, source) {
   return shader
 }
 
-const initVertexBuffers = function (gl, _array) {
+const initVertexBuffers = function (gl, _array, matrix) {
+
+  if(!matrix) {
+    matrix = new Float32Array([
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      0.5, 0.5, 0.5, 1.0,
+    ])
+  }else {
+    matrix = new Float32Array(matrix)
+  }
   const vertices = new Float32Array(_array)
 
   // 创建缓冲区对象
@@ -59,6 +70,11 @@ const initVertexBuffers = function (gl, _array) {
   // 获取顶点传入数据位置
   const a_position = gl.getAttribLocation(gl.program, 'a_position')
 
+  const u_xformMatrix = gl.getUniformLocation(gl.program, 'u_xformMatrix')
+
+  gl.uniformMatrix4fv(u_xformMatrix, false, matrix)
+
+
    // 将缓冲区对象分配给a_position变量
   gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0)
 
@@ -67,6 +83,8 @@ const initVertexBuffers = function (gl, _array) {
 
   return _array.length / 2
 }
+
+
 
 const clear = function (gl) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0)
@@ -85,6 +103,17 @@ const getRandomArray = function (len) {
   }
   return res
 }
+
+// class f4Matrix {
+//   constructor() {
+//     this.matrix = new Float32Array(
+//       1.0, 0.0, 0.0, 0.0,
+//       0.0, 1.0, 0.0, 0.0,
+//       0.0, 0.0, 1.0, 0.0,
+//       0.0, 0.0, 0.0, 1.0
+//     )
+//   }
+// }
 
 const exportFN = { initShaders, clear, getRandom, initVertexBuffers, getRandomArray }
 window.utils = window.utils ? {
