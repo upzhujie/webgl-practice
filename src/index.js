@@ -6,19 +6,43 @@ const gl = canvas.getContext('webgl')
 
 // gl.clear(gl.COLOR_BUFFER_BIT)
 
+// const VertexSHADER_SOURCE = `
+//   attribute vec4 a_position;
+//   uniform mat4 u_xformMatrix;
+//   attribute vec4 a_color;
+//   varying vec4 v_color;
+//   void main() {
+//     gl_Position = u_xformMatrix * a_position;
+//     v_color = a_color;
+//   }
+// `
+
+// const FragmentSHADER_SOURCE = `
+//   precision mediump float;
+//   uniform vec4 u_fragcolor;
+//   varying vec4 v_color;
+//   void main() {
+//     gl_FragColor = v_color;
+//   }
+// `
 const VertexSHADER_SOURCE = `
   attribute vec4 a_position;
   uniform mat4 u_xformMatrix;
+  attribute vec2 a_texcoord;
+  varying vec2 v_texcoord;
   void main() {
     gl_Position = u_xformMatrix * a_position;
+    v_texcoord = a_texcoord;
   }
 `
 
 const FragmentSHADER_SOURCE = `
   precision mediump float;
   uniform vec4 u_fragcolor;
+  varying vec2 v_texcoord;
+  uniform sampler2D u_sampler;
   void main() {
-    gl_FragColor = u_fragcolor;
+    gl_FragColor = texture2D(u_sampler, v_texcoord);
   }
 `
 
@@ -32,13 +56,13 @@ const matrix = [
 ]
 
 let n = 0
-setInterval(() => {
+// setInterval(() => {
   utils.clear(gl)
   
   
-  const u_fragcolor = gl.getUniformLocation(gl.program, 'u_fragcolor')
+  // const u_fragcolor = gl.getUniformLocation(gl.program, 'u_fragcolor')
   
-  gl.uniform4f(u_fragcolor, ...[1.0, 1.0, 0.0, 1.0]) //...utils.getRandomArray(4))
+  // gl.uniform4f(u_fragcolor, ...[1.0, 1.0, 0.0, 1.0]) //...utils.getRandomArray(4))
   
   // drawPoint(gl)
   
@@ -52,7 +76,8 @@ setInterval(() => {
   matrix[13] = translate
   matrix[14] = translate
   // console.log('matrix: ', matrix);
-  drawRect(gl, matrix)
+  // drawRect(gl)
+  drawImage(gl)
   n++
   if(n > 120) {
     n = 0
@@ -61,7 +86,7 @@ setInterval(() => {
   
   // translate
 
-}, 17)
+// }, 17)
 
 
 

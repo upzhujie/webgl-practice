@@ -51,15 +51,27 @@ const initVertexBuffers = function (gl, _array, matrix) {
       1.0, 0.0, 0.0, 0.0,
       0.0, 1.0, 0.0, 0.0,
       0.0, 0.0, 1.0, 0.0,
-      0.5, 0.5, 0.5, 1.0,
+      0.0, 0.0, 0.0, 1.0,
     ])
   }else {
     matrix = new Float32Array(matrix)
   }
+
+
   const vertices = new Float32Array(_array)
+
+  // const verticesColor = new Float32Array([
+  //   0.0, 0.0, 1.0, 1.0, 0.0,
+  //   1.0, 0.0, 1.0, 0.0, 1.0,
+  //   1.0, 1.0, 0.0, 1.0, 1.0,
+  //   0.0, 1.0, 1.0, 1.0, 1.0
+  // ])
+
+
 
   // 创建缓冲区对象
   const vertexBuffer = gl.createBuffer()
+
 
   // 绑定缓冲区对象到目标中
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
@@ -70,18 +82,25 @@ const initVertexBuffers = function (gl, _array, matrix) {
   // 获取顶点传入数据位置
   const a_position = gl.getAttribLocation(gl.program, 'a_position')
 
+  // const a_color = gl.getAttribLocation(gl.program, 'a_color')
+  const a_texcoord = gl.getAttribLocation(gl.program, 'a_texcoord')
+
+  const FSIZE = vertices.BYTES_PER_ELEMENT;
+
   const u_xformMatrix = gl.getUniformLocation(gl.program, 'u_xformMatrix')
 
   gl.uniformMatrix4fv(u_xformMatrix, false, matrix)
 
 
    // 将缓冲区对象分配给a_position变量
-  gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, 0, 0)
+  gl.vertexAttribPointer(a_position, 2, gl.FLOAT, false, FSIZE * 4, 0)
+  gl.vertexAttribPointer(a_texcoord, 2, gl.FLOAT, false, FSIZE * 4, FSIZE * 2)
 
   // 链接a_position变量与分配给他的缓冲区对象
   gl.enableVertexAttribArray(a_position)
+  gl.enableVertexAttribArray(a_texcoord)
 
-  return _array.length / 2
+  return _array.length / 4
 }
 
 
